@@ -1,6 +1,6 @@
  <!-- cart drawer upsell product code starts from here -->
       <div class="cart-upsell-pro" style="display:none;">
-        {% assign upsellPro = all_products["entrupy-authentication-certificates"] %}
+        {% assign upsellPro = all_products["{{ product.handle }}"] %}
         {% assign upsell_variant_id = upsellPro.first_available_variant.id %}
         <div class="upsell-pro-inner">
           <div class="upsell-media">
