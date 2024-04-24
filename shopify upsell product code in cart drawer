@@ -1,0 +1,74 @@
+ <!-- cart drawer upsell product code starts from here -->
+      <div class="cart-upsell-pro" style="display:none;">
+        {% assign upsellPro = all_products["entrupy-authentication-certificates"] %}
+        {% assign upsell_variant_id = upsellPro.first_available_variant.id %}
+        <div class="upsell-pro-inner">
+          <div class="upsell-media">
+            <img src="{{ upsellPro.featured_image | img_url:'' }}" alt="upsell_pro">
+          </div>
+          <div class="upsell-infor">
+            <h5>{{ upsellPro.title }}</h5>
+            <p>{{ upsellPro.price | money }}</p>
+            <button type="button" data-variant="{{ upsell_variant_id }}" class="btn btn--full upsell-cart-button">
+              Add to cart
+            </button>
+          </div>
+        </div>
+      </div>
+
+<style>
+/* upsell prodcut css starts from here */
+.upsell-pro-inner{display: flex;flex-wrap: wrap;align-items: center;}
+.upsell-media{max-width: 100px;}
+.upsell-infor{max-width: calc(100% - 100px);padding-left: 15px;}
+.cart-upsell-pro{margin: 20px 0;}
+</style>
+
+<script>
+
+    // add this code to the cart load function
+    setTimeout(function(){ 
+          if(document.querySelector(".cart__items").getAttribute("data-upsell") == 'true'){
+            document.querySelector(".cart-upsell-pro").style.display = "block";
+          } 
+          if(document.querySelector(".cart__items").getAttribute("data-upsellpro") == 'true'){
+            document.querySelector(".cart-upsell-pro").style.display = "none";
+          } 
+        }, 500);
+
+        // end
+    function addToCart(variantId) {
+    fetch('/cart/add.js', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        items: [{
+          id: variantId,
+          quantity: 1
+        }]
+      })
+    })
+    .then(response => {
+      return response.json();
+    })
+    .then(data => {
+      fetch("/cart").then((response) => {
+      return response.text();
+      }).then((data) =>{
+      // var parser = new DOMParser();
+      // let newdata = parser.parseFromString(data, 'text/html');
+      //  document.querySelector(".cart__items").innerHTML = newdata.querySelector(".cart__page-col[data-products]").innerHTML;
+        location.reload();
+      })
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+    });
+  }
+  document.querySelector(".upsell-cart-button").addEventListener("click",(e) => {
+    let variant_id = Number(e.target.getAttribute("data-variant"));
+    addToCart(variant_id)
+  })
+</script>
